@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="15" time="68.611" timestamp="2025-06-15T10:42:32.251662+06:30" hostname="Lao-Lao-Mac.local"><testcase classname="test_order" name="test_order_1" time="0.000" /><testcase classname="test_order" name="test_order_3" time="0.000" /><testcase classname="test_order" name="test_order_2" time="0.000" /><testcase classname="marker_test" name="test_critical_function_1" time="0.000" /><testcase classname="marker_test" name="test_critical_function_2" time="0.000" /><testcase classname="marker_test" name="test_critical_function_3" time="0.000" /><testcase classname="marker_test" name="test_normal_function_1" time="0.000" /><testcase classname="marker_test" name="test_normal_function_2" time="0.000" /><testcase classname="marker_test" name="test_unimportant_function" time="0.000" /><testcase classname="test_login" name="test_valid_login[Admin-admin123-True]" time="9.457" /><testcase classname="test_login" name="test_valid_login[Admin-admin-False]" time="13.586" /><testcase classname="test_login" name="test_valid_login[admin-admin123-False]" time="18.323"><failure message="selenium.common.exceptions.TimeoutException: Message: &#10;Stacktrace:&#10;0   chromedriver                        0x0000000102a64708 cxxbridge1$str$ptr + 2729312&#10;1   chromedriver                        0x0000000102a5c96c cxxbridge1$str$ptr + 2697156&#10;2   chromedriver                        0x00000001025ae728 cxxbridge1$string$len + 90444&#10;3   chromedriver                        0x00000001025f59b8 cxxbridge1$string$len + 381916&#10;4   chromedriver                        0x00000001026370c4 cxxbridge1$string$len + 649960&#10;5   chromedriver                        0x00000001025e9bc0 cxxbridge1$string$len + 333284&#10;6   chromedriver                        0x0000000102a28298 cxxbridge1$str$ptr + 2482416&#10;7   chromedriver                        0x0000000102a2b52c cxxbridge1$str$ptr + 2495364&#10;8   chromedriver                        0x0000000102a09ae0 cxxbridge1$str$ptr + 2357560&#10;9   chromedriver                        0x0000000102a2bdb4 cxxbridge1$str$ptr + 2497548&#10;10  chromedriver                        0x00000001029fadec cxxbridge1$str$ptr + 2296900&#10;11  chromedriver                        0x0000000102a4bc4c cxxbridge1$str$ptr + 2628260&#10;12  chromedriver                        0x0000000102a4bdd8 cxxbridge1$str$ptr + 2628656&#10;13  chromedriver                        0x0000000102a5c5b8 cxxbridge1$str$ptr + 2696208&#10;14  libsystem_pthread.dylib             0x000000018f53dc0c _pthread_start + 136&#10;15  libsystem_pthread.dylib             0x000000018f538b80 thread_start + 8">username = 'admin', password = 'admin123', expected = False
+setup_teardown = &lt;selenium.webdriver.chrome.webdriver.WebDriver (session="90ddf7b0aede8dbb5c06a51b7ccf768a")&gt;
+
+    @pytest.mark.parametrize("username, password, expected",[
+        ("Admin", "admin123", True),
+        ("Admin","admin", False),
+        ("admin","admin123", False),
+        ("aaaa","aaaa", False),
+    ])
+    def test_valid_login(username, password, expected,setup_teardown):
+        driver = setup_teardown
+        wait = WebDriverWait(driver, 10)
+        name = wait.until(EC.visibility_of_element_located((By.NAME, "username")))
+        name.send_keys(username)
+        pword = wait.until(EC.visibility_of_element_located((By.NAME, "password")))
+        pword.send_keys(password)
+        login_btn = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@type='submit']")))
+        login_btn.click()
+    
+        time.sleep(3)
+        if expected:
+            assert "dashboard" in driver.current_url, "Login Failed"
+    
+        else:
+&gt;           err_msg= wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@role='alert']")))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_login.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;selenium.webdriver.support.wait.WebDriverWait (session="90ddf7b0aede8dbb5c06a51b7ccf768a")&gt;
+method = &lt;function visibility_of_element_located.&lt;locals&gt;._predicate at 0x1062ca3e0&gt;, message = ''
+
+    def until(self, method: Callable[[D], Union[Literal[False], T]], message: str = "") -&gt; T:
+        """Wait until the method returns a value that is not False.
+    
+        Calls the method provided with the driver as an argument until the
+        return value does not evaluate to ``False``.
+    
+        Parameters:
+        -----------
+        method: callable(WebDriver)
+            - A callable object that takes a WebDriver instance as an argument.
+    
+        message: str
+            - Optional message for :exc:`TimeoutException`
+    
+        Return:
+        -------
+        object: T
+            - The result of the last call to `method`
+    
+        Raises:
+        -------
+        TimeoutException
+            - If 'method' does not return a truthy value within the WebDriverWait
+            object's timeout
+    
+        Example:
+        --------
+        &gt;&gt;&gt; from selenium.webdriver.common.by import By
+        &gt;&gt;&gt; from selenium.webdriver.support.ui import WebDriverWait
+        &gt;&gt;&gt; from selenium.webdriver.support import expected_conditions as EC
+    
+        # Wait until an element is visible on the page
+        &gt;&gt;&gt; wait = WebDriverWait(driver, 10)
+        &gt;&gt;&gt; element = wait.until(EC.visibility_of_element_located((By.ID, "exampleId")))
+        &gt;&gt;&gt; print(element.text)
+        """
+        screen = None
+        stacktrace = None
+    
+        end_time = time.monotonic() + self._timeout
+        while True:
+            try:
+                value = method(self._driver)
+                if value:
+                    return value
+            except self._ignored_exceptions as exc:
+                screen = getattr(exc, "screen", None)
+                stacktrace = getattr(exc, "stacktrace", None)
+            if time.monotonic() &gt; end_time:
+                break
+            time.sleep(self._poll)
+&gt;       raise TimeoutException(message, screen, stacktrace)
+E       selenium.common.exceptions.TimeoutException: Message: 
+E       Stacktrace:
+E       0   chromedriver                        0x0000000102a64708 cxxbridge1$str$ptr + 2729312
+E       1   chromedriver                        0x0000000102a5c96c cxxbridge1$str$ptr + 2697156
+E       2   chromedriver                        0x00000001025ae728 cxxbridge1$string$len + 90444
+E       3   chromedriver                        0x00000001025f59b8 cxxbridge1$string$len + 381916
+E       4   chromedriver                        0x00000001026370c4 cxxbridge1$string$len + 649960
+E       5   chromedriver                        0x00000001025e9bc0 cxxbridge1$string$len + 333284
+E       6   chromedriver                        0x0000000102a28298 cxxbridge1$str$ptr + 2482416
+E       7   chromedriver                        0x0000000102a2b52c cxxbridge1$str$ptr + 2495364
+E       8   chromedriver                        0x0000000102a09ae0 cxxbridge1$str$ptr + 2357560
+E       9   chromedriver                        0x0000000102a2bdb4 cxxbridge1$str$ptr + 2497548
+E       10  chromedriver                        0x00000001029fadec cxxbridge1$str$ptr + 2296900
+E       11  chromedriver                        0x0000000102a4bc4c cxxbridge1$str$ptr + 2628260
+E       12  chromedriver                        0x0000000102a4bdd8 cxxbridge1$str$ptr + 2628656
+E       13  chromedriver                        0x0000000102a5c5b8 cxxbridge1$str$ptr + 2696208
+E       14  libsystem_pthread.dylib             0x000000018f53dc0c _pthread_start + 136
+E       15  libsystem_pthread.dylib             0x000000018f538b80 thread_start + 8
+
+.venv/lib/python3.13/site-packages/selenium/webdriver/support/wait.py:138: TimeoutException</failure></testcase><testcase classname="test_login" name="test_valid_login[aaaa-aaaa-False]" time="7.702" /><testcase classname="test_login" name="test_required_field" time="10.963" /><testcase classname="test_login" name="test_logout" time="8.528" /></testsuite></testsuites>
